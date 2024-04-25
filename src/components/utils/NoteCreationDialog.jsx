@@ -8,6 +8,7 @@ import { styled, useMediaQuery } from "@mui/material";
 import { DEFAULT_ERROR_OBJECT, buildError } from "../../utils/ValidationUtils";
 import { useState } from "react";
 import { isBlank } from "underscore.string";
+import { useNoteStore } from "../../lib/stores/NoteStore";
 
 const StyledDialogContent = styled(DialogContent)({
   display: "flex",
@@ -23,44 +24,78 @@ const StyledDialogActions = styled(DialogActions)({
   justifyContent: "space-between",
 });
 
-const DEFAULT_ERRORS = {
-  title: DEFAULT_ERROR_OBJECT,
-  content: DEFAULT_ERROR_OBJECT,
-};
-
 export default function NoteCreationDialog(props) {
-  const { onClose } = props;
   const mobile = useMediaQuery("(max-width: 500px)");
-  const [errors, setErrors] = useState(DEFAULT_ERRORS);
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [titleError, setTitleError] = useState(DEFAULT_ERROR_OBJECT);
+  const [contentError, setContentError] = useState(DEFAULT_ERROR_OBJECT);
+  const addNote = useNoteStore((state) => state.addNote);
+
+  function buildTitleError() {
+    setTitleError(buildError("Title must not be blank"));
+  }
+
+  function resetTitleError() {
+    setTitleError(DEFAULT_ERROR_OBJECT);
+  }
+
+  function buildContentError() {
+    setContentError(buildError("Content must not be blank"))
+  }
+
+  function resetContentError() {
+    setContentError(DEFAULT_ERROR_OBJECT);
+  }
 
   function handleTitleChange(event) {
     const { value } = event.target;
     if (!value || isBlank(value)) {
-      setErrors({
-        ...errors,
-        title: buildError("Title must not be blank")
-      })
+      buildTitleError();
       return;
     }
-    setErrors({
-      ...errors,
-      title: DEFAULT_ERROR_OBJECT
-    });
+    setTitle(value);
+    resetTitleError();
   }
 
   function handleContentChange(event) {
     const { value } = event.target;
     if (!value || isBlank(value)) {
-      setErrors({
-        ...errors,
-        content: buildError("Content must not be blank")
-      })
+      buildContentError();
       return;
     }
-    setErrors({
-      ...errors,
-      content: DEFAULT_ERROR_OBJECT
-    });
+    setContent(value);
+    resetContentError();
+  }
+
+  
+  function handleClose() {
+    resetTitleError();
+    resetContentError();
+    props.onClose();
+  }
+
+  function handleSave(event) {
+    event.preventDefault();
+    const hasTitleError = !title || titleError.error;
+    const hasContentError = !content || contentError.error;
+
+    if (hasTitleError || hasContentError) {
+      if (hasTitleError) {
+        buildTitleError();
+      }
+      if (hasContentError) {
+        buildContentError();
+      }
+      return;
+    }
+    
+    resetTitleError();
+    resetContentError();
+
+    const id = crypto.randomUUID();
+    addNote({ id, title, content });
+    handleClose();
   }
 
   return (
@@ -70,23 +105,23 @@ export default function NoteCreationDialog(props) {
         <TextField
           variant="standard"
           label="Title"
-          error={errors.title.error}
-          helperText={errors.title.message}
+          error={titleError.error}
+          helperText={titleError.message}
           onChange={handleTitleChange}
         />
         <TextField
           variant="standard"
           label="Content"
           placeholder="Start typing"
-          error={errors.content.error}
-          helperText={errors.content.message}
+          error={contentError.error}
+          helperText={contentError.message}
           onChange={handleContentChange}
           multiline
         />
       </StyledDialogContent>
       <StyledDialogActions>
-        <Button onClick={onClose}>Back</Button>
-        <Button>Save</Button>
+        <Button onClick={handleClose}>Back</Button>
+        <Button onClick={handleSave}>Save</Button>
       </StyledDialogActions>
     </Dialog>
   );

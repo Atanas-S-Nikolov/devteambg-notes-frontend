@@ -1,4 +1,4 @@
-import { styled } from "@mui/material";
+import { Typography, styled } from "@mui/material";
 
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
@@ -7,10 +7,10 @@ import SearchIcon from "@mui/icons-material/Search";
 import AddIcon from "@mui/icons-material/Add";
 
 import NotePreview from "./NotePreview";
-import { notes } from "@/constants/Notes";
 import NoteCreationDialog from "../utils/NoteCreationDialog";
-import { useState } from "react";
+import { useDeferredValue, useEffect, useState } from "react";
 import StyledFab from "../styled/StyledFab";
+import { useNoteStore } from "@/lib/stores/NoteStore";
 
 const StyledSearch = styled(TextField)(({ theme }) => ({
   width: "100%",
@@ -26,6 +26,17 @@ const StyledBox = styled(Box)(() => ({
 
 export default function NotesList() {
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const deferredQuery = useDeferredValue(searchQuery);
+  const _notes = useNoteStore((state) => state.notes);
+  const [notes, setNotes] = useState(_notes);
+  const areNotesEmpty = notes.length === 0;
+
+  useEffect(() => {
+    const filteredNotes = _notes.filter(note => note.title.toLowerCase().includes(deferredQuery));
+    setNotes(filteredNotes);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [deferredQuery]);
 
   function handleDialogOpen(event) {
     event.preventDefault();
@@ -36,19 +47,45 @@ export default function NotesList() {
     setDialogOpen(false);
   }
 
-  return (
-    <>
-      <StyledSearch
-        placeholder="Search"
-        InputProps={{
-          startAdornment: <SearchIcon />,
-        }}
-      />
+  function handleSearchChange(event) {
+    setSearchQuery(event.target.value);
+  }
+
+  function renderNotes() {
+    if (areNotesEmpty) {
+      return (
+        <Typography
+          align="center"
+          color="text.secondary"
+          variant="h5"
+          lineHeight={2}
+        >
+          There are no notes.
+          <br />
+          Create your first note
+        </Typography>
+      );
+    }
+
+    return (
       <StyledBox>
         {notes.map((note) => (
           <NotePreview key={note.id} note={note} />
         ))}
       </StyledBox>
+    );
+  }
+
+  return (
+    <>
+      <StyledSearch
+        placeholder="Search"
+        onChange={handleSearchChange}
+        InputProps={{
+          startAdornment: <SearchIcon />,
+        }}
+      />
+      {renderNotes()}
       <StyledFab
         aria-label="Add note"
         color="primary"
