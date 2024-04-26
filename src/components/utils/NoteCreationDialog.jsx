@@ -1,7 +1,6 @@
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
-import DialogActions from "@mui/material/DialogActions";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import { styled, useMediaQuery } from "@mui/material";
@@ -9,6 +8,7 @@ import { DEFAULT_ERROR_OBJECT, buildError } from "../../utils/ValidationUtils";
 import { useState } from "react";
 import { isBlank } from "underscore.string";
 import { useNoteStore } from "../../lib/stores/NoteStore";
+import StyledDialogActions from "../styled/StyledDialogActions";
 
 const StyledDialogContent = styled(DialogContent)({
   display: "flex",
@@ -17,11 +17,6 @@ const StyledDialogContent = styled(DialogContent)({
   "&.MuiDialogContent-root": {
     paddingTop: "1em",
   },
-});
-
-const StyledDialogActions = styled(DialogActions)({
-  display: "flex",
-  justifyContent: "space-between",
 });
 
 export default function NoteCreationDialog(props) {
@@ -48,6 +43,13 @@ export default function NoteCreationDialog(props) {
     setContentError(DEFAULT_ERROR_OBJECT);
   }
 
+  function resetState() {
+    resetTitleError();
+    resetContentError();
+    setTitle("");
+    setContent("");
+  }
+
   function handleTitleChange(event) {
     const { value } = event.target;
     if (isBlank(value)) {
@@ -70,8 +72,7 @@ export default function NoteCreationDialog(props) {
 
   
   function handleClose() {
-    resetTitleError();
-    resetContentError();
+    resetState();
     props.onClose();
   }
 
@@ -89,9 +90,6 @@ export default function NoteCreationDialog(props) {
       }
       return;
     }
-    
-    resetTitleError();
-    resetContentError();
 
     const id = crypto.randomUUID();
     addNote({ id, title, content });
