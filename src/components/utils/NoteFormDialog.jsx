@@ -15,6 +15,7 @@ import { useNoteStore } from "@/lib/stores/NoteStore";
 import StyledDialogActions from "../styled/StyledDialogActions";
 import { CREATE_ACTION, EDIT_ACTION } from "@/constants/ActionConstants";
 import { useNavigate } from "react-router-dom";
+import dayjs from "dayjs";
 
 const StyledDialogContent = styled(DialogContent)({
   display: "flex",
@@ -101,11 +102,13 @@ export default function NoteFormDialog(props) {
       return;
     }
 
+    const timestamp = dayjs();
+
     if (action === CREATE_ACTION) {
       const id = crypto.randomUUID();
-      addNote({ id, title, content });
+      addNote({ id, title, timestamp, content });
     } else if (action === EDIT_ACTION) {
-      updateNote({ id: note.id, title, content });
+      updateNote({ id: note.id, title, timestamp, content });
       navigate(0);
     }
 

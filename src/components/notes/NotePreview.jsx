@@ -8,6 +8,11 @@ import Typography from "@mui/material/Typography";
 import { NOTE_URL } from "@/constants/UrlConstants";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import dayjs from "dayjs";
+import {
+  DEFAULT_DATE_FORMAT,
+  DEFAULT_TIME_FORMAT,
+} from "@/constants/DateTimeConstants";
 
 const StyledCardHeader = styled(CardHeader)({
   "& .MuiCardHeader-content": {
@@ -18,8 +23,14 @@ const StyledCardHeader = styled(CardHeader)({
 const DEFAULT_ELEVATION = 3;
 
 export default function NotePreview({ note }) {
-  const { id, title, content } = note;
+  const { id, title, content, timestamp } = note;
   const [elevation, setElevation] = useState(DEFAULT_ELEVATION);
+  const isTheSameDay =
+    dayjs().format(DEFAULT_DATE_FORMAT) ===
+    dayjs(timestamp).format(DEFAULT_DATE_FORMAT);
+  const noteTimestampFormat = isTheSameDay
+    ? DEFAULT_TIME_FORMAT
+    : DEFAULT_DATE_FORMAT;
 
   function handleMouseEnter() {
     setElevation(10);
@@ -39,6 +50,7 @@ export default function NotePreview({ note }) {
         <StyledCardHeader
           title={title}
           titleTypographyProps={{ noWrap: true }}
+          subheader={dayjs(timestamp).format(noteTimestampFormat)}
         />
         <CardContent>
           <Typography noWrap>{content}</Typography>

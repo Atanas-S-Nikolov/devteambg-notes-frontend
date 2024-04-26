@@ -60,24 +60,19 @@ export default function NotesList() {
   function renderNotes() {
     if (areNotesEmpty) {
       return (
-        <Typography
-          align="center"
-          color="text.secondary"
-          variant="h5"
-          lineHeight={2}
-        >
-          There are no notes.
-          <br />
-          Create your first note
+        <Typography align="center" color="text.secondary" variant="h5">
+          Could not find notes
         </Typography>
       );
     }
 
     return (
       <StyledBox>
-        {notes.map((note) => (
-          <NotePreview key={note.id} note={note} />
-        ))}
+        {notes
+          .sort((n1, n2) => new Date(n2.timestamp) - new Date(n1.timestamp))
+          .map((note) => (
+            <NotePreview key={note.id} note={note} />
+          ))}
       </StyledBox>
     );
   }

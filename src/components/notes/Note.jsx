@@ -6,12 +6,14 @@ import CardContent from "@mui/material/CardContent";
 import { useParams } from "react-router-dom";
 import { useNoteStore } from "../../lib/stores/NoteStore";
 import NoteActions from "../utils/NoteActions";
+import dayjs from "dayjs";
+import { DEFAULT_DATE_TIME_FORMAT } from "@/constants/DateTimeConstants";
 
 export default function Note() {
   const { noteId } = useParams();
   const getNote = useNoteStore((state) => state.getNote);
   const note = getNote(noteId);
-  const { title, content } = note;
+  const { title, content, timestamp } = note;
 
   return (
     <>
@@ -22,10 +24,13 @@ export default function Note() {
               {title}
             </Typography>
           }
+          subheader={dayjs(timestamp).format(DEFAULT_DATE_TIME_FORMAT)}
           action={<NoteActions note={note} />}
         />
         <CardContent>
-          <Typography paragraph>{content}</Typography>
+          <Typography whiteSpace="pre-wrap" paragraph>
+            {content}
+          </Typography>
         </CardContent>
       </Card>
     </>
