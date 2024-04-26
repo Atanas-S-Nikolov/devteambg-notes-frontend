@@ -50,7 +50,7 @@ export default function NoteCreationDialog(props) {
 
   function handleTitleChange(event) {
     const { value } = event.target;
-    if (!value || isBlank(value)) {
+    if (isBlank(value)) {
       buildTitleError();
       return;
     }
@@ -60,7 +60,7 @@ export default function NoteCreationDialog(props) {
 
   function handleContentChange(event) {
     const { value } = event.target;
-    if (!value || isBlank(value)) {
+    if (isBlank(value)) {
       buildContentError();
       return;
     }

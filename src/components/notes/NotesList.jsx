@@ -11,6 +11,7 @@ import NoteCreationDialog from "../utils/NoteCreationDialog";
 import { useDeferredValue, useEffect, useState } from "react";
 import StyledFab from "../styled/StyledFab";
 import { useNoteStore } from "@/lib/stores/NoteStore";
+import { isBlank } from "underscore.string";
 
 const StyledSearch = styled(TextField)(({ theme }) => ({
   width: "100%",
@@ -33,10 +34,13 @@ export default function NotesList() {
   const areNotesEmpty = notes.length === 0;
 
   useEffect(() => {
+    if (isBlank(deferredQuery)) {
+      setNotes(_notes);
+      return;
+    }
     const filteredNotes = _notes.filter(note => note.title.toLowerCase().includes(deferredQuery));
     setNotes(filteredNotes);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [deferredQuery]);
+  }, [_notes, deferredQuery]);
 
   function handleDialogOpen(event) {
     event.preventDefault();
