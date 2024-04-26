@@ -18,11 +18,14 @@ import StyledDialogActions from "../styled/StyledDialogActions";
 import { useNoteStore } from "../../lib/stores/NoteStore";
 import { useNavigate } from "react-router-dom";
 import { HOME_URL } from "@/constants/UrlConstants";
+import NoteFormDialog from "./NoteFormDialog";
+import { EDIT_ACTION } from "../../constants/ActionConstants";
 
 export default function NoteActions({ note }) {
   const [anchorEl, setAnchorEl] = useState(null);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const open = Boolean(anchorEl);
+  const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const removeNote = useNoteStore((state) => state.removeNote);
   const navigate = useNavigate();
 
@@ -35,9 +38,20 @@ export default function NoteActions({ note }) {
     setAnchorEl(null);
   }
 
+  function handleUpdateDialogOpen(event) {
+    event.preventDefault();
+    setUpdateDialogOpen(true);
+    handleMenuClose();
+  }
+
+  function handleUpdateDialogClose() {
+    setUpdateDialogOpen(false);
+  }
+
   function handleDeleteDialogOpen(event) {
     event.preventDefault();
     setDeleteDialogOpen(true);
+    handleMenuClose();
   }
 
   function handleDeleteDialogClose() {
@@ -55,7 +69,7 @@ export default function NoteActions({ note }) {
         <MoreVertIcon />
       </IconButton>
       <Menu anchorEl={anchorEl} open={open} onClose={handleMenuClose}>
-        <MenuItem>
+        <MenuItem onClick={handleUpdateDialogOpen}>
           <ListItemIcon>
             <EditIcon />
           </ListItemIcon>
@@ -70,6 +84,14 @@ export default function NoteActions({ note }) {
           </ListItemText>
         </MenuItem>
       </Menu>
+      {updateDialogOpen ? (
+        <NoteFormDialog
+          action={EDIT_ACTION}
+          note={note}
+          open={updateDialogOpen}
+          onClose={handleUpdateDialogClose}
+        />
+      ) : null}
       <Dialog open={deleteDialogOpen} onClose={handleDeleteDialogClose}>
         <DialogTitle>Do you want to delete this note?</DialogTitle>
         <DialogContent>

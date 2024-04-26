@@ -7,7 +7,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import AddIcon from "@mui/icons-material/Add";
 
 import NotePreview from "./NotePreview";
-import NoteCreationDialog from "../utils/NoteCreationDialog";
+import NoteFormDialog from "../utils/NoteFormDialog";
 import { useDeferredValue, useEffect, useState } from "react";
 import StyledFab from "../styled/StyledFab";
 import { useNoteStore } from "@/lib/stores/NoteStore";
@@ -38,7 +38,9 @@ export default function NotesList() {
       setNotes(_notes);
       return;
     }
-    const filteredNotes = _notes.filter(note => note.title.toLowerCase().includes(deferredQuery));
+    const filteredNotes = _notes.filter((note) =>
+      note.title.toLowerCase().includes(deferredQuery)
+    );
     setNotes(filteredNotes);
   }, [_notes, deferredQuery]);
 
@@ -97,7 +99,9 @@ export default function NotesList() {
       >
         <AddIcon />
       </StyledFab>
-      <NoteCreationDialog open={dialogOpen} onClose={handleDialogClose} />
+      {dialogOpen ? (
+        <NoteFormDialog open={dialogOpen} onClose={handleDialogClose} />
+      ) : null}
     </>
   );
 }
