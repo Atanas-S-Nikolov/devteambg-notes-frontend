@@ -8,6 +8,7 @@ import { useNoteStore } from "../../lib/stores/NoteStore";
 import NoteActions from "../utils/NoteActions";
 import dayjs from "dayjs";
 import { DEFAULT_DATE_TIME_FORMAT } from "@/constants/DateTimeConstants";
+import RootLayout from "../Layout";
 
 export default function Note() {
   const { noteId } = useParams();
@@ -16,7 +17,7 @@ export default function Note() {
   const { title, content, timestamp } = note;
 
   return (
-    <>
+    <RootLayout>
       <Card>
         <CardHeader
           title={
@@ -33,6 +34,6 @@ export default function Note() {
           </Typography>
         </CardContent>
       </Card>
-    </>
+    </RootLayout>
   );
 }

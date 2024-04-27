@@ -120,6 +120,7 @@ export default function NoteFormDialog(props) {
       <DialogTitle>Create a note</DialogTitle>
       <StyledDialogContent>
         <TextField
+          id="title"
           variant="standard"
           label="Title"
           error={titleError.error}
@@ -128,6 +129,7 @@ export default function NoteFormDialog(props) {
           onChange={handleTitleChange}
         />
         <TextField
+          id="content"
           variant="standard"
           label="Content"
           placeholder="Start typing"
