@@ -2,7 +2,7 @@ import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";  
+import Button from "@mui/material/Button";
 import { styled, useMediaQuery } from "@mui/material";
 import {
   DEFAULT_ERROR_OBJECT,
@@ -37,6 +37,8 @@ export default function NoteFormDialog(props) {
   const [contentError, setContentError] = useState(DEFAULT_ERROR_OBJECT);
   const addNote = useNoteStore((state) => state.addNote);
   const updateNote = useNoteStore((state) => state.updateNote);
+  const dialogTitle =
+    action === CREATE_ACTION ? "Create a note" : "Update note";
   const navigate = useNavigate();
 
   function buildTitleError() {
@@ -117,7 +119,7 @@ export default function NoteFormDialog(props) {
 
   return (
     <Dialog fullScreen={mobile} fullWidth {...dialogProps}>
-      <DialogTitle>Create a note</DialogTitle>
+      <DialogTitle>{dialogTitle}</DialogTitle>
       <StyledDialogContent>
         <TextField
           id="title"
