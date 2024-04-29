@@ -9,13 +9,13 @@
 3. Install dependencies:
 
     ```bash
-    npm install # or equivalent in your package manger
+    npm install # or equivalent in your package manager
     ```
 
 4. Run in development:
 
     ```bash
-    npm run dev # or equivalent in your package manger
+    npm run dev # or equivalent in your package manager
     ```
 
 The app should be opened in the browser. If not open [http://localhost:5173](http://localhost:5173)
